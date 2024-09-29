@@ -28,7 +28,7 @@ def authenticator(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=403, detail="Could not validate token")
 
 def generate_jwt(user_data: User):
-    expire = datetime.now() + timedelta(minutes=int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')))
+    expire = datetime.now() + timedelta(minutes=30)
     
     data = user_data.model_dump()
     data.update({"exp": expire})
