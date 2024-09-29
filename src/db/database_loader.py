@@ -103,3 +103,7 @@ class DataBaseLoader:
                 topics[subject] = [item[1].strip()]
         
         return topics
+    
+    def add_user_subject(self, username: str, subjects: list):
+        self.db_queries.add_user_subject(username, subjects)
+        

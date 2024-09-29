@@ -21,8 +21,10 @@ class DBUser(BaseModel):
     username: Optional[str] = ""
     password_hash: Optional[str] = ""
 
-
-class InvalidUser(BaseModel):
+class Error(BaseModel):
+    message: Optional[str] = ""
+    
+class Acknowledgement(BaseModel):
     message: Optional[str] = ""
 
 class Subjects(BaseModel):
