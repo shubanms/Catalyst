@@ -13,12 +13,12 @@ class DatabaseConnector:
     def initialize(cls):
         """Initialize the connection pool"""
         cls._connection_pool = pool.SimpleConnectionPool(
-            minconn=1,
-            maxconn=10,
+            minconn=int(os.getenv('DB_MIN_POOL')),
+            maxconn=int(os.getenv('DB_MAX_POOL')),
             user=os.getenv('DB_USER'),
             password=os.getenv('DB_PASS'),
             host=os.getenv('DB_HOST'),
-            port=5432,
+            port=int(os.getenv('DB_PORT')),
             database=os.getenv('DB_NAME')
         )
 
