@@ -5,7 +5,8 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 
-from src.schemas.schemas import User, Token
+from src.schemas.auth import Token
+from src.schemas.user import UserCredentials
 from src.utils.util import user_exists
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -18,7 +19,9 @@ def authenticator(token: str = Depends(oauth2_scheme)):
         username = payload.get("username")
         password = payload.get("password")
         
-        user_data = User(username=username, password=password)
+        print(username, password)
+        
+        user_data = UserCredentials(username=username, password=password)
         
         if user_exists(user_data):
             return username
@@ -27,7 +30,7 @@ def authenticator(token: str = Depends(oauth2_scheme)):
     except:
         raise HTTPException(status_code=403, detail="Could not validate token")
 
-def generate_jwt(user_data: User):
+def generate_jwt(user_data: UserCredentials):
     expire = datetime.now() + timedelta(minutes=30)
     
     data = user_data.model_dump()
