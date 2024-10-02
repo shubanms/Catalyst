@@ -1,5 +1,4 @@
 import os
-import psycopg2
 
 from dotenv import load_dotenv
 from psycopg2 import pool
@@ -39,3 +38,21 @@ class DatabaseConnector:
         """Close all the connections in the pool"""
         if cls._connection_pool:
             cls._connection_pool.closeall()
+            
+    @classmethod
+    def execute(cls, query: str, params=None, update=False):
+        """Execute a query, optionally commit if it's an update operation"""
+        conn = cls.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)
+                if update:
+                    conn.commit()
+                    return True
+                return cursor.fetchall()
+        except Exception as error:
+            conn.rollback()
+            print(f"Error: {error}")
+            return None
+        finally:
+            cls.return_connection(conn)
