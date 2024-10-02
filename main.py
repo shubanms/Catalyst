@@ -49,3 +49,4 @@ async def show_my_topics(username = Depends(authenticator)):
 @app.post("/add-new-subject/")
 async def add_new_subject(subjects: Subjects, username = Depends(authenticator)):
     return add_subject(username, subjects)
+
