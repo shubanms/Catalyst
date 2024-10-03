@@ -8,7 +8,7 @@ from src.services.auth import generate_jwt
 
 router = APIRouter()
 
-@router.get("/token/", response_model=Union[Token, Error])
+@router.post("/token/", response_model=Union[Token, Error])
 async def generate_token(user_data: UserCredentials):
     if user_exists(user_data):
         return generate_jwt(user_data)

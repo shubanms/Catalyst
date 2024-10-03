@@ -56,5 +56,40 @@ class UserQueries:
 
     def fetch_topics(self, username: str):
         query = '''
-            
+            SELECT s."NAME", tt."TOPIC_NAME"
+            FROM "TOPIC_TABLE" tt
+            JOIN "USER_SUBJECTS_TABLE" ust ON tt."SUBJECT_ID" = ust."SUBJECT_ID"
+            JOIN "USERS_TABLE" ut ON ust."USER_ID" = ut."USER_ID"
+            JOIN "SUBJECTS_TABLE" s ON tt."SUBJECT_ID" = s."SUBJECT_ID"
+            WHERE ut."USERNAME" = %s;
         '''
+        
+        params = (username,)
+        
+        return self.db_connector.execute(query=query, params=params)
+
+    def add_subject(self, username: str, subject: str):
+        query = '''
+            INSERT INTO public."USER_SUBJECTS_TABLE"("USER_ID", "SUBJECT_ID")
+            SELECT ut."USER_ID", st."SUBJECT_ID"
+            FROM "USERS_TABLE" ut, "SUBJECTS_TABLE" st
+            WHERE ut."USERNAME" = %s AND st."NAME" = %s;
+        '''
+        
+        params = (username, subject,)
+        
+        return self.db_connector.execute(query=query, params=params, update=True)
+
+    def delete_subject(self, username: str, subject: str):
+        query = '''
+            DELETE FROM "USER_SUBJECTS_TABLE"
+            WHERE ("USER_ID", "SUBJECT_ID") = (
+                SELECT ut."USER_ID", st."SUBJECT_ID"
+                FROM "USERS_TABLE" ut, "SUBJECTS_TABLE" st
+                WHERE ut."USERNAME" = %s AND st."NAME" = %s
+            );
+        '''
+        
+        params = (username, subject,)
+        
+        return self.db_connector.execute(query=query, params=params, update=True)

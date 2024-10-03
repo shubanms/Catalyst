@@ -19,8 +19,6 @@ def authenticator(token: str = Depends(oauth2_scheme)):
         username = payload.get("username")
         password = payload.get("password")
         
-        print(username, password)
-        
         user_data = UserCredentials(username=username, password=password)
         
         if user_exists(user_data):

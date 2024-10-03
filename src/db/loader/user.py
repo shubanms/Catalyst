@@ -1,8 +1,7 @@
-import random
-
 from src.db.connector import DatabaseConnector
 from src.db.query.user import UserQueries
-from src.schemas.user import User 
+from src.schemas.user import User
+from src.schemas.subject import Topics
 
 DatabaseConnector.initialize()
 
@@ -39,7 +38,34 @@ class UserDataLoader:
         return user_details
     
     def get_subjects(self, username: str):
-        data = self.db_queries.fetch_subjects
+        data = self.db_queries.fetch_subjects(username)
+        
+        subjects = [item[0].strip() for item in data]
+        
+        return subjects
 
     def get_topic(self, username: str):
-        data = self.db_queries.fetch_subjects
+        data = self.db_queries.fetch_topics(username)
+        
+        subjects = {}
+        
+        for subject, topic in data:
+            if subject in subjects:
+                subjects[subject].append(topic)
+            else:
+                subjects[subject] = [topic]
+                
+        topics = []
+        
+        for key, value in subjects.items():
+            topics.append(Topics(subject_name=key, topics=value))
+        
+        return topics
+        
+    def add_subjects(self, username: str, subjects: list):
+        for subject in subjects:
+            self.db_queries.add_subject(username, subject)
+
+    def remove_subjects(self, username: str, subjects: list):
+        for subject in subjects:
+            self.db_queries.delete_subject(username, subject)
